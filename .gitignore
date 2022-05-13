@@ -1,0 +1,40 @@
+# Folders
+
+.git/
+.cache/
+
+# Projects
+
+*.xcworkspace
+*.xcodeproj/
+.kdev4/
+.vs/
+
+# Binaries
+
+lib/
+bin/
+obj/
+
+# Files
+
+*.DS_Store
+*.gch
+*.log
+*.exe
+*.swp
+*.vim
+*.json
+
+# Build Generators
+
+*.mk
+*.make
+premake5
+Makefile
+
+# Projects
+
+*.kdev4
+*.sln
+*.vcxproj*
