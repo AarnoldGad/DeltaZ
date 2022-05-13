@@ -1,0 +1,12 @@
+[submodule "ZucchiniLib/Zucchini/deps/glm"]
+	path = ZucchiniLib/Zucchini/deps/glm
+	url = https://github.com/g-truc/glm
+[submodule "ZucchiniLib/Zucchini/deps/fmt"]
+	path = ZucchiniLib/Zucchini/deps/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "ZucchiniLib/Zucchini/deps/backward-cpp"]
+	path = ZucchiniLib/Zucchini/deps/backward-cpp
+	url = https://github.com/bombela/backward-cpp
+[submodule "ZucchiniGraphics/ZGraphics/deps/glfw"]
+	path = ZucchiniGraphics/ZGraphics/deps/glfw
+	url = https://github.com/glfw/glfw
