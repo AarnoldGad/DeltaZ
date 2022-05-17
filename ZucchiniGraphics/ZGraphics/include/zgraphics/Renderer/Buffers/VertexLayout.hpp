@@ -62,6 +62,7 @@ namespace zg
       bool normalised;
    };
 
+   TODO_BEFORE(7, 2022, "Construct with initializer_lists");
    class ZG_API VertexLayout
    {
    public:

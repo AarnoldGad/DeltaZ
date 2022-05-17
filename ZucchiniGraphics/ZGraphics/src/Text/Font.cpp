@@ -93,6 +93,7 @@ namespace zg
          if (!plane)
             return ze::Console::Trace("Fail to generate glyph plane {} for font {} !", planeID, std::string(face->family_name)),
                    Status::Error;
+         uint32_t boxSize = planeSize / 16;
          std::unique_ptr<Texture> planeTexture = std::make_unique<Texture>();
          auto glyph = face->glyph;
 
@@ -102,7 +103,7 @@ namespace zg
          {
             if (TryLoadChar(face, charcode) == Status::Error) continue;
 
-            glm::ivec2 pos = { charcode % 16 * charSize, charcode / 16 * charSize };
+            glm::ivec2 pos = { charcode % 16 * boxSize, charcode / 16 * boxSize - firstGlyph / 16 * boxSize };
             glm::ivec2 size = { glyph->bitmap.width, glyph->bitmap.rows };
 
             // Copy glyph bitmap at right position in plane

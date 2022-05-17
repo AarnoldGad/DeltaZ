@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       zg::Font font;
-      font.loadFile(zg::FontFile("assets/fonts/RobotoMono.ttf"), 48);
+      font.loadFile(zg::FontFile("assets/fonts/Arial.ttf"), 48);
 
       using namespace ze::literals;
       zg::OrthographicCamera camera({ 800.f, 600.f }, { 0.f, 0.f });
