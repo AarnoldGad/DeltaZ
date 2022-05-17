@@ -89,7 +89,7 @@ namespace zg { namespace details
 
    void WindowImpl::close()
    {
-      glfwSetWindowShouldClose(m_handle, GLFW_FALSE);
+      glfwSetWindowShouldClose(m_handle, GLFW_TRUE);
    }
 
    void WindowImpl::setEventBus(ze::EventBus* bus) noexcept

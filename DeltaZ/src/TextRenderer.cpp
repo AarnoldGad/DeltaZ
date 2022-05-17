@@ -23,20 +23,36 @@ void TextRenderer::renderText(zg::Shader& shader, zg::Font const& font,
 
    glActiveTexture(GL_TEXTURE0);
    m_vao.bind();
-   
+
    glm::vec2 pen = { 0.f, 0.f };
 
-   for (auto ch = text.begin(); ch != text.end(); ++ch)
+   for (auto it = text.begin(); it != text.end(); ++it)
    {
-      uint32_t charcode = (uint32_t) *ch;
-      // Convert utf8 to unicode codepoints
-//      if (*ch & 0b11000000)
+      uint32_t charcode = 0;
+      std::bitset<8> byteChar(*it);
+      std::bitset<8> twoBytesFilter(0b11100000);
+      std::bitset<8> twoBytesSign(0b11000000);
+      // Convert 2-bytes utf8 to unicode codepoints
+      // TODO Rework this monstrosity
+      if ((byteChar & twoBytesFilter) == twoBytesSign)
+      {
+         // TODO Should check for out of bounds, etc, its messy
+         std::bitset<8> byte1Filter(0b00011111);
+         std::bitset<8> byte2Filter(0b00111111);
+         std::bitset<8> byte1 = (byteChar & byte1Filter);
+         byteChar = *(++it);
+         std::bitset<8> byte2 = (byteChar & byte2Filter);
+         charcode = (byte1.to_ullong() << 6) | byte2.to_ullong();
+      }
+      else
+         charcode = byteChar.to_ullong();
+
       zg::Glyph const& glyph = font.getGlyph(charcode);
       
       glm::vec2 charPos = pen;
       glm::vec2 charSize = scale * static_cast<glm::vec2>(glyph.getSize());
       charPos.x += static_cast<float>(glyph.getBearing().x) * scale;
-      charPos.y += static_cast<float>(glyph.getBearing().y - glyph.getSize().y) * scale;
+      charPos.y += static_cast<float>(glyph.getSize().y - glyph.getBearing().y) * scale;
 
       float vertices[] = 
       {
