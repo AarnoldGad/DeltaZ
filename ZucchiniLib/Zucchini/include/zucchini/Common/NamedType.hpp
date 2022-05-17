@@ -47,14 +47,38 @@ namespace ze
       explicit NamedType(Type&& value,
                          typename std::enable_if_t<!std::is_reference_v<Type_>, std::nullptr_t> = nullptr);
 
-      explicit operator Type&() noexcept;
-      explicit operator Type const&() const noexcept;
-
       Type& get() noexcept;
       Type const& get() const noexcept;
 
    private:
       Type m_value;
+   };
+
+   template<typename NamedType_>
+   class Dereferenceable;
+
+   template<typename Type, typename Parameter, template<typename> class... Capabilities>
+   class Dereferenceable<NamedType<Type, Parameter, Capabilities...> >
+      : public crtp<NamedType<Type, Parameter, Capabilities...>, Dereferenceable>
+   {
+   public:
+      Type* operator->() noexcept;
+      Type const* operator->() const noexcept;
+
+      Type& operator*() noexcept;
+      Type const& operator*() const noexcept;
+   };
+
+   template<typename NamedType_>
+   class ImplicitlyConvertible;
+
+   template<typename Type, typename Parameter, template<typename> class... Capabilities>
+   class ImplicitlyConvertible<NamedType<Type, Parameter, Capabilities...> >
+      : public crtp<NamedType<Type, Parameter, Capabilities...>, ImplicitlyConvertible>
+   {
+   public:
+      operator Type&() noexcept;
+      operator Type const&() const noexcept;
    };
 }
 

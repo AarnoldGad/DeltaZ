@@ -26,16 +26,19 @@ int main(int argc, char* argv[])
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
       zg::Font font;
-      font.loadFile("assets/fonts/RobotoMono.ttf", 48);
+      font.loadFile(zg::FontFile("assets/fonts/RobotoMono.ttf"), 48);
 
       using namespace ze::literals;
-      zg::OrthographicCamera camera({ 2.f, 2.f }, { 1.f, 1.f });
+      zg::OrthographicCamera camera({ 800.f, 600.f }, { 0.f, 0.f });
       zg::Shader shader;
       zg::DefaultRenderer renderer;
       zg::Sprite sprite({ 1.f, 1.f });
-      auto glyph = font.getGlyph(90);
+      auto glyph = font.getGlyph(0xE9);
       sprite.setTexture(glyph.getTexture());
-      sprite.setPosition({ 1.f, 1.f, 0.f });
+      sprite.setTextureRect(glyph.getRect());
+      sprite.setPosition({ 0.f, 0.f, 0.f });
+      sprite.setSize({ 300.f, 300.f });
+      sprite.setOrigin({ 150.f, 150.f, 0.f });
       
       zg::VertexLayout layout;
       layout.add(zg::VertexAttribute::Type::Vec2, "vPos");

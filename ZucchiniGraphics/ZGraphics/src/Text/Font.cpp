@@ -1,116 +1,238 @@
-#include "zgpch.hpp"
-
 #include "zgraphics/Text/Font.hpp"
 #include "detail/Common/ContextImpl.hpp"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+#include <glad/glad.h>
 
+#define MAX_FONT_SIZE 1024UL
+
+TODO_BEFORE(6, 2022, "Prove that everything work as expected (No memory leak, no errors, etc...)");
 namespace zg
 {
-   Font::Font()
-      : m_encoding(Encoding::Latin1) {}
-
-   Status Font::loadFile(std::filesystem::path const& file, uint32_t const size, Encoding encoding)
+   namespace
    {
-      FT_Library lib = details::ContextImpl::GetFreetype();
-      if (!lib)
-         return ze::Console::Trace("Fail to load font file {} : Freetype has not been loaded yet", file),
-                Status::Error;
-      if (size > MAX_FONT_SIZE)
-         return ze::Console::Trace("Font size is to big !"), Status::Error;
+      using Value = ze::NamedType<uint32_t, struct ValueParameter, ze::ImplicitlyConvertible>;
+      using Max= ze::NamedType<uint32_t, struct ValueParameter, ze::ImplicitlyConvertible>;
 
-      // Init font data
-      m_size = size;
-      m_file = file;
-      m_encoding = encoding;
-
-      m_glyphs.clear();
-
-      FT_Face face;
-
-      // TODO Error handling
-      int error = FT_New_Face(lib, file.string().c_str(), 0, &face);
-      if (error)
-         return ze::Console::Trace("Fail to load font file {}", file), Status::Error;
-
-      // TODO Encoding
-      if (face->charmap->encoding != FT_Encoding::FT_ENCODING_UNICODE)
-         return ze::Console::Trace("Fail to retrieve unicode charmap from font {}", file), Status::Error;
-
-      error = FT_Set_Pixel_Sizes(face, 0, size);
-      if (error)
-         return ze::Console::Trace("Fail to set pixel size for font {}", file), Status::Error;
-
-      // Load Characters
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-      // Generate a 16*8 chars table for ASCII chars
-      uint32_t neededRowLength = size * 16;
-      uint32_t rowLength = 1;
-      while (rowLength <= neededRowLength) rowLength<<= 1;
-      uint32_t totalSize = rowLength * rowLength / 2;
-      uint8_t* ascii = new uint8_t[totalSize];
-      std::fill(ascii, ascii+totalSize, 0);
-      uint32_t charSize = rowLength / 16;
-
-      // Ascii Characters
-      for (uint32_t charcode = 0x00; charcode < 0x7F; ++charcode)
+      // TODO Maybe a better algorithm exists
+      std::optional<uint32_t> FindFirstBitGreaterThan(Value const value, Max const max = Max(0x80000000))
       {
-         error = FT_Load_Char(face, charcode, FT_LOAD_RENDER);
-         if (error)
-         {
-            ze::Console::Print("Fail to load character {:#x} from font {}", charcode, file);
-            continue;
-         }
-
-         auto glyph = face->glyph;
-
-         glm::ivec2 pos = { charcode % 16 * charSize, charcode / 16 * charSize };
-         glm::ivec2 size = { glyph->bitmap.width, glyph->bitmap.rows };
-
-         for (int y = 0; y < size.y; ++y)
-            for (int x = 0; x < size.x; ++x)
-               ascii[(pos.x + x) + (pos.y + y) * rowLength] = glyph->bitmap.buffer[x + y * glyph->bitmap.pitch];
-
-         glm::vec4 rect = { static_cast<float>(pos.x) / static_cast<float>(rowLength),
-                            static_cast<float>(pos.y) * 2.f / static_cast<float>(rowLength),
-                            static_cast<float>(size.x) / static_cast<float>(rowLength),
-                            static_cast<float>(size.y) * 2.f / static_cast<float>(rowLength) };
-         m_glyphs[charcode] = Glyph(&m_ascii, rect, size,
-                                    { glyph->bitmap_left, glyph->bitmap_top },
-                                    glyph->advance.x);
+         if (value > 0x80000000 || value > max) return std::nullopt; // Guard overflow
+         
+         uint32_t bit = 1;
+         while (bit < value) if (bit <<= 1, bit > max) return std::nullopt;
+         return bit;
       }
 
-      m_ascii.loadData(ascii, { rowLength, rowLength / 2 }, Image::Format::Grey);
-/*
-      // Latin1 Supplement
-      for (uint32_t charcode = 0xA0; charcode <= 0xFF; ++charcode)
+      Status CheckPrerequisites(FT_Library lib, std::filesystem::path const& file, short const charSize)
       {
-         error = FT_Load_Char(face, charcode, FT_LOAD_RENDER);
+         if (!lib)
+            return ze::Console::Trace("Fail to load font file {} : Freetype has not been loaded yet !", file),
+                   Status::Error;
+         if (charSize > MAX_FONT_SIZE || charSize == 0)
+            return ze::Console::Trace("Invalid font size : {}", charSize),
+                   Status::Error;
+         
+         return Status::OK;
+      }
+
+      std::tuple<FT_Error, FT_Face> LoadNewFace(FT_Library lib, std::filesystem::path const& file,
+                                                short const charSize, zg::Encoding encoding)
+      {
+         FT_Face face;
+         FT_Error fterror = FT_New_Face(lib, file.string().c_str(), 0, &face);
+         if (fterror)
+            return ze::Console::Trace("Fail to load font file {}", file),
+                   std::make_tuple(fterror, face);
+
+         // TODO Encoding
+         if (face->charmap->encoding != FT_Encoding::FT_ENCODING_UNICODE)
+            return ze::Console::Trace("Fail to retrieve unicode charmap from font {}", file),
+                   std::make_tuple(fterror, face);
+
+         fterror = FT_Set_Pixel_Sizes(face, 0, charSize);
+         if (fterror)
+            return ze::Console::Trace("Fail to set pixel size for font {}", file),
+                   std::make_tuple(fterror, face);
+
+         return std::make_tuple(fterror, face);
+      }
+
+      std::tuple<uint32_t, uint8_t*> GeneratePlaneArray(short const charSize)
+      {
+         uint32_t minimumAtlasSize = charSize * 16;
+         auto planeSize= FindFirstBitGreaterThan(Value(minimumAtlasSize), Max(GL_MAX_TEXTURE_SIZE));
+         if (!planeSize.has_value())
+            return ze::Console::Trace("Invalid atlas size for char size {} !", charSize),
+                   std::make_tuple(0, nullptr);
+
+         uint32_t planeByteSize = planeSize.value() * planeSize.value();
+         uint8_t* plane = new uint8_t[planeByteSize];
+         std::fill(plane, plane + planeByteSize, 0);
+
+         return std::make_tuple(planeSize.value(), plane);
+      }
+
+      Status TryLoadChar(FT_Face face, uint32_t const charcode)
+      {
+         int error = FT_Load_Char(face, charcode, FT_LOAD_RENDER);
          if (error)
+            return ze::Console::Print("Fail to load character {:#x} from font {}", charcode, std::string(face->family_name)),
+                   Status::Error;
+         return Status::OK;
+      }
+
+      Status LoadGlyphPlane(FT_Face face, short const charSize, uint32_t const planeID,
+                            uint32_t const firstGlyph, uint32_t const lastGlyph,
+                            std::map<uint32_t, Glyph>& glyphs,
+                            std::map<uint32_t, std::unique_ptr<Texture> >& planes)
+      {
+         ZE_ASSERT(firstGlyph < lastGlyph, "Invalid character range !");
+         ZE_ASSERT(lastGlyph - firstGlyph < 16 * 16, "Plane cannot be more than 16*16 chars !");
+
+         auto [planeSize, plane] = GeneratePlaneArray(charSize);
+         if (!plane)
+            return ze::Console::Trace("Fail to generate glyph plane {} for font {} !", planeID, std::string(face->family_name)),
+                   Status::Error;
+         std::unique_ptr<Texture> planeTexture = std::make_unique<Texture>();
+         auto glyph = face->glyph;
+
+         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+         for (uint32_t charcode = firstGlyph; charcode < lastGlyph; ++charcode)
          {
-            ze::Console::Print("Fail to load character {:#x} from font {}", charcode, file);
-            continue;
+            if (TryLoadChar(face, charcode) == Status::Error) continue;
+
+            glm::ivec2 pos = { charcode % 16 * charSize, charcode / 16 * charSize };
+            glm::ivec2 size = { glyph->bitmap.width, glyph->bitmap.rows };
+
+            // Copy glyph bitmap at right position in plane
+            for (int y = 0; y < size.y; ++y)
+               for (int x = 0; x < size.x; ++x)
+                  plane[(pos.x + x) + (pos.y + y) * planeSize] = glyph->bitmap.buffer[x + y * glyph->bitmap.pitch];
+
+            glm::vec4 rect = { static_cast<float>(pos.x)  / static_cast<float>(planeSize),
+                               static_cast<float>(pos.y)  / static_cast<float>(planeSize),
+                               static_cast<float>(size.x) / static_cast<float>(planeSize),
+                               static_cast<float>(size.y) / static_cast<float>(planeSize) };
+            glyphs[charcode] = Glyph(planeTexture.get(), rect, size,
+                                     { glyph->bitmap_left, glyph->bitmap_top },
+                                     glyph->advance.x);
          }
 
-         auto glyph = face->glyph;
-         zg::Texture* texture = m_textures.emplace(charcode, std::make_unique<Texture>()).first->second.get();
-         texture->loadData(glyph->bitmap.buffer, { glyph->bitmap.width, glyph->bitmap.rows }, Image::Format::Grey);
-         m_glyphs[charcode] = Glyph(texture,
-                                    { glyph->bitmap.width, glyph->bitmap.rows },
-                                    { glyph->bitmap_left, glyph->bitmap_top },
-                                      glyph->advance.x);
-      }*/
+         planeTexture->loadData(plane, { planeSize, planeSize }, Image::Format::Grey);
+         planes[planeID] = std::move(planeTexture);
 
-      glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+         glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
+         return Status::OK;
+      }
+   }
+
+   Font::Font()
+      : m_encoding(Encoding::Unkown) {}
+
+   Status Font::loadFile(FontFile const& file, unsigned short const charSize, Encoding const encoding)
+   {
+      FT_Library lib = details::ContextImpl::GetFreetype();
+      if (CheckPrerequisites(lib, file, charSize) == Status::Error) return Status::Error;
+
+      // Init font data
+      this->unload();
+      m_encoding = encoding;
+
+      auto [error, face] = LoadNewFace(lib, file, charSize, encoding);
+      if (error) return Status::Error;
+
+      // Load Characters (ASCII and Latin1)
+      if (LoadGlyphPlane(face, charSize, 0, 0x00, 0x7F, m_glyphs, m_atlas) == Status::Error) return Status::Error;
+      if (LoadGlyphPlane(face, charSize, 1, 0xA0, 0xFF, m_glyphs, m_atlas) == Status::Error) return Status::Error;
+
       FT_Done_Face(face);
 
       return Status::OK;
    }
 
-   void Font::setEncoding(Encoding const encoding) noexcept
+   TODO_BEFORE(7, 2022, "Implement bitmap fonts");
+   Status Font::loadFile(BitmapFile const& file, glm::ivec2 const glyphCount,
+                         uint32_t const startChar, Encoding const encoding)
    {
-      m_encoding = encoding;
+      return Status::OK;
+   }
+
+   Status Font::loadBitmap(Image const& bitmap, glm::ivec2 const glyphCount,
+                           uint32_t const startChar, Encoding const encoding)
+   {
+      return Status::OK;
+   }
+
+   void Font::unload()
+   {
+      m_glyphs.clear();
+      m_atlas.clear();
+      m_encoding = Encoding::Unkown;
    }
 }
+
+// TODO Implement
+namespace ze
+{
+   zg::Font* ResourceLoader<zg::Font>::Load(zg::FontFile const& file,
+                                            unsigned short const charSize, zg::Encoding const encoding)
+   {
+      auto foundFile = ze::ResourceManager<zg::Font>::FindFile(file);
+
+      if (!foundFile) return (void) ze::Console::Trace("File not found : {}", file.get()), nullptr;
+
+      zg::Font* font= new zg::Font;
+      font->loadFile(zg::FontFile(foundFile.value()), charSize, encoding);
+      return font;
+   }
+
+   zg::Font* ResourceLoader<zg::Font>::Load(zg::BitmapFile const& file, glm::ivec2 const glyphCount,
+                                            uint32_t const startChar, zg::Encoding const encoding)
+   {
+      auto foundFile = ze::ResourceManager<zg::Font>::FindFile(file);
+
+      if (!foundFile) return (void) ze::Console::Trace("File not found : {}", file.get()), nullptr;
+
+      zg::Font* font= new zg::Font;
+      font->loadFile(zg::BitmapFile(foundFile.value()), glyphCount, startChar, encoding);
+      return font;
+   }
+
+   zg::Font* ResourceLoader<zg::Font>::Load(zg::Image const& bitmap, glm::ivec2 const glyphCount,
+                                            uint32_t const startChar, zg::Encoding const encoding)
+   {
+      zg::Font* font = new zg::Font;
+      font->loadBitmap(bitmap, glyphCount, startChar, encoding);
+      return font;
+   }
+
+   void ResourceLoader<zg::Font>::Reload(zg::Font* const font, zg::FontFile const& file,
+                                         unsigned short const charSize, zg::Encoding const encoding)
+   {
+      auto foundFile = ze::ResourceManager<zg::Font>::FindFile(file);
+      if (!foundFile) return (void) ze::Console::Trace("File not found : {}", file.get());
+      font->loadFile(zg::FontFile(foundFile.value()), charSize, encoding);
+   }
+
+   void ResourceLoader<zg::Font>::Reload(zg::Font* const font, zg::BitmapFile const& file, glm::ivec2 const glyphCount,
+                                         uint32_t const startChar, zg::Encoding const encoding)
+   {
+      auto foundFile = ze::ResourceManager<zg::Font>::FindFile(file);
+      if (!foundFile) return (void) ze::Console::Trace("File not found : {}", file.get());
+      font->loadFile(zg::BitmapFile(foundFile.value()), glyphCount, startChar, encoding);
+   }
+
+   void ResourceLoader<zg::Font>::Reload(zg::Font* const font, zg::Image const& bitmap, glm::ivec2 const glyphCount,
+                                         uint32_t const startChar, zg::Encoding const encoding)
+   {
+      font->loadBitmap(bitmap, glyphCount, startChar, encoding);
+   }
+
+   void ResourceLoader<zg::Font>::Unload(zg::Font* const font)
+   {
+      font->unload();
+   }
+}
+

@@ -33,24 +33,35 @@
 
 namespace zg
 {
-   using FontFile = ze::NamedType<std::filesystem::path, struct FontFileParameter>;
-   using BitmapFile = ze::NamedType<std::filesystem::path, struct FontFileParameter>;
+   using FontFile = ze::NamedType<std::filesystem::path, struct FontFileParameter,
+                                  ze::Dereferenceable, ze::ImplicitlyConvertible>;
+   using BitmapFile = ze::NamedType<std::filesystem::path, struct FontFileParameter,
+                                    ze::Dereferenceable, ze::ImplicitlyConvertible>;
 
+   // TODO Encoding is currently mostly unsupported and bitmap fonts are mostly limited to one plane
+   // with no glyph informations but main design seems ok
    class ZG_API Font
    {
    public:
-      static Font* LoadFile(FontFile file, short size, Encoding encoding = Encoding::Latin1);
-      static Font* LoadFile(BitmapFile file, Encoding encoding = Encoding::Latin1);
-      static Font* LoadBitmap(zg::Image const& bitmap, Encoding encoding = Encoding::Latin1);
+      Status loadFile(FontFile const& file, unsigned short charSize, Encoding encoding = Encoding::Latin1);
+      Status loadFile(BitmapFile const& file, glm::ivec2 glyphCount,
+                      uint32_t startChar = 32, Encoding encoding = Encoding::Latin1);
+      Status loadBitmap(zg::Image const& bitmap, glm::ivec2 glyphCount,
+                        uint32_t startChar = 32, Encoding encoding = Encoding::Latin1);
 
-      virtual Glyph const& getGlyph(uint32_t charcode) const = 0;
+      void unload();
+
+      Glyph const& getGlyph(uint32_t charcode) const;
+      Texture const* getAtlas(uint32_t plane) const;
 
       Encoding getEncoding() const noexcept;
-      void setEncoding(Encoding encoding) noexcept;
+      //void setEncoding(Encoding encoding) noexcept;
+
+      Font();
 
    private:
-      Font();
-      ~Font() = default;
+      std::map<uint32_t, Glyph> m_glyphs;
+      std::map<uint32_t, std::unique_ptr<Texture> > m_atlas;
 
       Encoding m_encoding;
    };
@@ -60,13 +71,19 @@ template<>
 struct ze::ResourceLoader<zg::Font>
 {
 public:
-   static zg::Font* Load(zg::FontFile const& file, short size, zg::Encoding encoding = zg::Encoding::Latin1);
-   static zg::Font* Load(zg::BitmapFile const& file, zg::Encoding encoding = zg::Encoding::Latin1);
-   static zg::Font* Load(zg::Image const& bitmap, zg::Encoding encoding = zg::Encoding::Latin1);
+   // TODO Return unique_ptr
+   static zg::Font* Load(zg::FontFile const& file, unsigned short charSize, zg::Encoding encoding = zg::Encoding::Latin1);
+   static zg::Font* Load(zg::BitmapFile const& file, glm::ivec2 glyphCount,
+                         uint32_t startChar = 32, zg::Encoding encoding = zg::Encoding::Latin1);
+   static zg::Font* Load(zg::Image const& bitmap, glm::ivec2 glyphCount,
+                         uint32_t startChar = 32, zg::Encoding encoding = zg::Encoding::Latin1);
 
-   static void Reload(zg::Font* font, zg::FontFile const& file, short size, zg::Encoding encoding = zg::Encoding::Latin1);
-   static void Reload(zg::Font* font, zg::BitmapFile const& file, zg::Encoding encoding = zg::Encoding::Latin1);
-   static void Reload(zg::Font* font, zg::Image const& bitmap, zg::Encoding encoding = zg::Encoding::Latin1);
+   static void Reload(zg::Font* font, zg::FontFile const& file, unsigned short charSize,
+                      zg::Encoding encoding = zg::Encoding::Latin1);
+   static void Reload(zg::Font* font, zg::BitmapFile const& file, glm::ivec2 glyphCount,
+                      uint32_t startChar = 32, zg::Encoding encoding = zg::Encoding::Latin1);
+   static void Reload(zg::Font* font, zg::Image const& bitmap, glm::ivec2 glyphCount,
+                      uint32_t startChar = 32, zg::Encoding encoding = zg::Encoding::Latin1);
 
    static void Unload(zg::Font* font);
 };
