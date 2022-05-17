@@ -5,7 +5,7 @@
 
 #define MAX_FONT_SIZE 1024UL
 
-TODO_BEFORE(6, 2022, "Prove that everything work as expected (No memory leak, no errors, etc...)");
+TODO_BEFORE(6, 2022, "Prove that everything work as expected (No memory leak, no overflow, no errors, etc...)");
 namespace zg
 {
    namespace

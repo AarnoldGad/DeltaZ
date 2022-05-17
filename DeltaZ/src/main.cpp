@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "dz/Program.hpp"
+#include "dz/TextRenderer.hpp"
 #include <glad/glad.h>
 
 void ConfigureWindow(int major, int minor)
@@ -25,15 +26,14 @@ int main(int argc, char* argv[])
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-      zg::Font font;
-      font.loadFile(zg::FontFile("assets/fonts/Arial.ttf"), 48);
+      zg::Font* font = ze::ResourceManager<zg::Font>::Load("arial", zg::FontFile("assets/fonts/Arial.ttf"), 48);
 
       using namespace ze::literals;
       zg::OrthographicCamera camera({ 800.f, 600.f }, { 0.f, 0.f });
       zg::Shader shader;
       zg::DefaultRenderer renderer;
       zg::Sprite sprite({ 1.f, 1.f });
-      auto glyph = font.getGlyph(0xE9);
+      auto glyph = font->getGlyph(0xE9);
       sprite.setTexture(glyph.getTexture());
       sprite.setTextureRect(glyph.getRect());
       sprite.setPosition({ 0.f, 0.f, 0.f });
@@ -49,11 +49,16 @@ int main(int argc, char* argv[])
 
       shader.loadFile("assets/shaders/default.vs", "assets/shaders/text.fs");
 
+      TextRenderer textRenderer;
+      textRenderer.setLayout(layout);
+      textRenderer.setViewProjection(&camera);
+
       while (!window->shouldClose())
       {
          window->clear();
-         renderer.submit(sprite, sprite.getTransformationMatrix());
-         renderer.render(shader);
+//         renderer.submit(sprite, sprite.getTransformationMatrix());
+//         renderer.render(shader);
+         textRenderer.renderText(shader, *font, "Hello", { 0.f, 0.f, 0.f }, 1.f);
          window->draw();
          zg::Context::PollEvents();
       }

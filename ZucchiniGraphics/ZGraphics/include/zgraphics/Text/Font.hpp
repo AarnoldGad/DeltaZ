@@ -39,7 +39,8 @@ namespace zg
                                     ze::Dereferenceable, ze::ImplicitlyConvertible>;
 
    // TODO Encoding is currently mostly unsupported and bitmap fonts are mostly limited to one plane
-   // with no glyph informations but main design seems ok
+   // with no glyph informations but main design seems ok for now.
+   // I will later use Signed Distance Fields and rework the whole system
    class ZG_API Font
    {
    public:

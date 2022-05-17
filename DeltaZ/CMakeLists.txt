@@ -31,7 +31,9 @@ TARGET_SOURCES(deltaz PRIVATE
                ${CPP_DIR}/main.cpp
 
                ${HPP_DIR}/Program.hpp
+               ${HPP_DIR}/TextRenderer.hpp
                ${CPP_DIR}/Program.cpp
+               ${CPP_DIR}/TextRenderer.cpp
                )
 
 TARGET_LINK_DIRECTORIES(deltaz PRIVATE

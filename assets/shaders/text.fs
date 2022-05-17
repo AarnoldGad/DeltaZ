@@ -6,10 +6,10 @@ in vec4 iColor;
 in vec2 iTexCoord;
 
 uniform float uTime;
-uniform sampler2D tex0;
+uniform sampler2D atlas;
 
 void main()
 {
-   vec4 texColor = texture(tex0, iTexCoord);
+   vec4 texColor = texture(atlas, iTexCoord);
    FragColor = vec4(iColor.rgb, texColor.r);
 }
