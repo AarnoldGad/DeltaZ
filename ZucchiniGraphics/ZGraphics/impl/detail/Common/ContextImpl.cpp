@@ -61,19 +61,19 @@ namespace zg { namespace details
 
    void ContextImpl::Terminate()
    {
-      if (s_isInitialised)
-      {
-         ze::Console::Print("------ * Terminating GLFW");
-         glfwTerminate();
-         s_isInitialised = false;
-      }
-
       if (s_isFreetypeLoaded)
       {
          ze::Console::Print("------ * Unloading Freetype");
          FT_Done_FreeType(s_freetype);
          s_freetype = nullptr;
          s_isFreetypeLoaded = false;
+      }
+
+      if (s_isInitialised)
+      {
+         ze::Console::Print("------ * Terminating GLFW");
+         glfwTerminate();
+         s_isInitialised = false;
       }
    }
 

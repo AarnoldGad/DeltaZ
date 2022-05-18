@@ -62,6 +62,8 @@ namespace zg
       //glfwWindowHintString(GLFW_X11_INSTANCE_NAME, settings.x11.instanceName.c_str());
    }
 
+   // TODO Check where to put/how to name this LoadAPI thing
+   // TODO Rework this Context object
    [[nodiscard]]
    std::unique_ptr<Window> Window::Make(std::string const& title, glm::ivec2 size, glm::ivec2 pos)
    {
