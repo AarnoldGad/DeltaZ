@@ -27,10 +27,12 @@
 #define ZE_ARGUMENTS_HPP
 
 #include "zucchini/defines.hpp"
+#include "zucchini/Debug/TodoBefore.hpp"
 
 #include <string>
 #include <vector>
 
+TODO_BEFORE(7, 2022, "Better program arguments parsing and standard (like -p/--param style arguments, with values etc)");
 namespace ze
 {
    class ZE_API Arguments
@@ -41,7 +43,7 @@ namespace ze
          std::string value;
       };
 
-      void setArguments(int argc, char* argv[]);
+      void configure(int argc, char* argv[]);
       Argument const* getArgument(size_t index) const;
 
       size_t size() const noexcept;

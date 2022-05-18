@@ -4,10 +4,10 @@ namespace ze
 {
    Arguments::Arguments(int argc, char* argv[])
    {
-      setArguments(argc, argv);
+      configure(argc, argv);
    }
 
-   void Arguments::setArguments(int argc, char* argv[])
+   void Arguments::configure(int argc, char* argv[])
    {
       m_arguments.clear();
       m_arguments.resize(argc);
@@ -18,8 +18,11 @@ namespace ze
 
    std::vector<ze::Arguments::Argument>::const_iterator Arguments::find(std::string const& value) const
    {
-      auto found = std::find_if(m_arguments.begin(), m_arguments.end(),
-                                [&value](Argument const& argument) { return argument.value == value; });
+      auto found = std::find_if(this->begin(), this->end(),
+                                [&value] (Argument const& argument) -> bool
+                                {
+                                   return argument.value == value;
+                                });
       return found;
    }
 }
