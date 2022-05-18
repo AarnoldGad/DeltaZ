@@ -23,6 +23,8 @@
  *
  *    3. This notice may not be removed or altered from any source distribution.
  **/
+#ifndef ZE_TODOBEFORE_HPP
+#define ZE_TODOBEFORE_HPP
 
 // Inspired by https://www.fluentcpp.com/2019/01/01/todo_before-clean-codebase-2019/
 
@@ -70,4 +72,6 @@ inline constexpr int currentYear()
    static_assert((month > 0 && month <= 12) && \
                  (currentYear() < year || (currentYear() == year && currentMonth() < month)), \
                  "FIXME " fix)
+
+#endif // ZE_TODOBEFORE_HPP
 
