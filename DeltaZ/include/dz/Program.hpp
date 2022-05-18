@@ -7,21 +7,14 @@
 class Program
 {
 public:
-   static void Initialise(int argc, char* argv[]);
+   static void Configure(int argc, char* argv[]);
 
    static ze::Arguments const* GetArguments() noexcept;
    static int GetPID() noexcept;
 
-   // Load Geometry
-   // Solve Geometry
-   // Show Results Window
-
-   static void Terminate();
-
 private:
    Program() = delete;
 
-   static bool s_initialised;
    static ze::Arguments s_arguments;
    static unsigned s_pid;
 };

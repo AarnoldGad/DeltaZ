@@ -7,7 +7,6 @@
    #include <unistd.h>
 #endif
 
-bool Program::s_initialised = false;
 ze::Arguments Program::s_arguments;
 
 unsigned Program::s_pid =
@@ -19,12 +18,9 @@ unsigned Program::s_pid =
    0;
 #endif
 
-void Program::Initialise(int argc, char* argv[])
+void Program::Configure(int argc, char* argv[])
 {
-   zg::Context::Initialise();
-   zg::Context::LoadFreetype();
-
-   s_initialised = true;
+   s_arguments.configure(argc, argv);
 }
 
 ze::Arguments const* Program::GetArguments() noexcept
@@ -35,12 +31,5 @@ ze::Arguments const* Program::GetArguments() noexcept
 int Program::GetPID() noexcept
 {
    return s_pid;
-}
-
-void Program::Terminate()
-{
-   zg::Context::Terminate();
-
-   s_initialised = false;
 }
 

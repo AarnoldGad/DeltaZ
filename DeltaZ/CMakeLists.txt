@@ -32,8 +32,12 @@ TARGET_SOURCES(deltaz PRIVATE
 
                ${HPP_DIR}/Program.hpp
                ${HPP_DIR}/TextRenderer.hpp
+               ${HPP_DIR}/LaplaceSolver.hpp
+               ${HPP_DIR}/ResultApp.hpp
                ${CPP_DIR}/Program.cpp
                ${CPP_DIR}/TextRenderer.cpp
+               ${CPP_DIR}/LaplaceSolver.cpp
+               ${CPP_DIR}/ResultApp.cpp
                )
 
 TARGET_LINK_DIRECTORIES(deltaz PRIVATE
