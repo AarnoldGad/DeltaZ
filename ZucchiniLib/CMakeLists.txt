@@ -30,6 +30,7 @@ CONFIGURE_FILE(config.hpp.in zeconfig.hpp @ONLY NEWLINE_STYLE LF)
 
 ADD_SUBDIRECTORY(Zucchini/deps/fmt)
 ADD_SUBDIRECTORY(Zucchini/deps/backward-cpp)
+ADD_SUBDIRECTORY(Zucchini/deps/yaml-cpp)
 
 ADD_SUBDIRECTORY(Zucchini)
 

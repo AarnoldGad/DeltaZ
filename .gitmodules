@@ -10,3 +10,6 @@
 [submodule "ZucchiniGraphics/ZGraphics/deps/glfw"]
 	path = ZucchiniGraphics/ZGraphics/deps/glfw
 	url = https://github.com/glfw/glfw
+[submodule "ZucchiniLib/Zucchini/deps/yaml-cpp"]
+	path = ZucchiniLib/Zucchini/deps/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp

@@ -37,6 +37,7 @@ TARGET_INCLUDE_DIRECTORIES(zucchini PUBLIC
                            "${INCLUDE_DIR}"
                            "${DEPS_DIR}/fmt/include"
                            "${DEPS_DIR}/glm"
+                           "${DEPS_DIR}/yaml-cpp/include"
                            "${PROJECT_BINARY_DIR}"
                            )
 
@@ -207,6 +208,7 @@ FIND_PACKAGE(Backward REQUIRED)
 TARGET_LINK_LIBRARIES(zucchini PRIVATE
                       fmt
                       Backward::Backward
+                      yaml-cpp
 
                       Threads::Threads
                       ${CMAKE_DL_LIBS}
