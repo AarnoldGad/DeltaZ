@@ -9,13 +9,14 @@ class Geometry
 public:
    void loadFile(std::filesystem::path const& file);
 
-   double getPrecision() const noexcept;
+   float getPrecision() const noexcept;
    std::vector<Node>& getNodes() noexcept;
+   std::vector<Node> const& getNodes() const noexcept;
 
    Geometry();
 
 private:
-   double m_precision;
+   float m_precision;
    std::vector<Node> m_nodes;
 };
 

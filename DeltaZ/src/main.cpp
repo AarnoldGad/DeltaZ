@@ -19,11 +19,12 @@ int main(int argc, char* argv[])
    solver.generateDomainFrom(geometry);
 
 //   // Solve equation
-//   Result results = solver.solve();
+//   solver.solve();
+   Grid const& results = solver.getGrid();
 
    // Show results
    ResultApp resultInterface;
-//   resultInterface.show(results);
+   resultInterface.show(geometry, results);
 
    return 0;
 }

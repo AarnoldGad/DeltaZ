@@ -1,35 +1,40 @@
+inline bool GridNode::isBoundary() const noexcept
+{
+   return m_isBoundary;
+}
+
 inline GridNode::Neighbours const& GridNode::getNeighbours() const noexcept
 {
    return m_neighbours;
 }
 
+inline float Grid::getPrecision() const noexcept
+{
+   return m_precision;
+}
+
+inline glm::vec4 Grid::getBounds() const noexcept
+{
+   return m_bounds;
+}
+
 inline GridNode& Grid::getNode(int const x, int const y)
 {
-   return m_domainNodes.at(std::tie(x, y));
+   return m_nodes.at(std::tie(x, y));
 }
 
 inline GridNode const& Grid::getNode(int const x, int const y) const
 {
-   return m_domainNodes.at(std::tie(x, y));
-}
-
-inline Node& Grid::getBoundary(int const column, int const index)
-{
-   return m_boundaries.at(std::tie(column, index));
-}
-
-inline Node const& Grid::getBoundary(int const column, int const index) const
-{
-   return m_boundaries.at(std::tie(column, index));
+   return m_nodes.at(std::tie(x, y));
 }
 
 inline std::map<std::tuple<int, int>, GridNode>& Grid::getNodes() noexcept
 {
-   return m_domainNodes;
+   return m_nodes;
 }
 
-inline std::map<std::tuple<int, int>, Node>& Grid::getBoundaries() noexcept
+inline std::map<std::tuple<int, int>, GridNode> const& Grid::getNodes() const noexcept
 {
-   return m_boundaries;
+   return m_nodes;
 }
 

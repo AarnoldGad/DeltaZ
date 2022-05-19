@@ -2,10 +2,10 @@
 
 void LaplaceSolver::generateDomainFrom(Geometry const& geometry)
 {
-
+   m_grid.configureGridFrom(geometry);
 }
 
-Result LaplaceSolver::solve()
+void LaplaceSolver::solve()
 {
 
 }
