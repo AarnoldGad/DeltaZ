@@ -28,26 +28,46 @@ TARGET_INCLUDE_DIRECTORIES(deltaz SYSTEM PRIVATE
                            )
 
 TARGET_SOURCES(deltaz PRIVATE
-               ${CPP_DIR}/main.cpp
-
                ${HPP_DIR}/Program.hpp
-               ${HPP_DIR}/TextRenderer.hpp
-               ${HPP_DIR}/LaplaceSolver.hpp
-               ${HPP_DIR}/ResultApp.hpp
-               ${HPP_DIR}/ResultLayer.hpp
-               ${HPP_DIR}/Grid.hpp
-               ${HPP_DIR}/Geometry.hpp
-               ${HPP_DIR}/NodeVertex.hpp
+
+               ${HPP_DIR}/Graphics/GeometryShape.hpp
+               ${HPP_DIR}/Graphics/GeometryShape.inl
+               ${HPP_DIR}/Graphics/GridShape.hpp
+               ${HPP_DIR}/Graphics/GridShape.inl
+               ${HPP_DIR}/Graphics/Legend.hpp
+               ${HPP_DIR}/Graphics/Legend.inl
+               ${HPP_DIR}/Graphics/TextRenderer.hpp
+               ${HPP_DIR}/Graphics/ResultRenderer.hpp
+               ${HPP_DIR}/Graphics/NodeVertex.hpp
+               ${HPP_DIR}/Graphics/NodeVertex.inl
+               ${HPP_DIR}/Graphics/ResultApp.hpp
+               ${HPP_DIR}/Graphics/ResultLayer.hpp
+
+               ${HPP_DIR}/Solver/Geometry.hpp
+               ${HPP_DIR}/Solver/Geometry.inl
+               ${HPP_DIR}/Solver/Grid.hpp
+               ${HPP_DIR}/Solver/Grid.inl
+               ${HPP_DIR}/Solver/LaplaceSolver.hpp
+               ${HPP_DIR}/Solver/LaplaceSolver.inl
+               ${HPP_DIR}/Solver/Node.hpp
+               ${HPP_DIR}/Solver/Node.inl
 
                ${CPP_DIR}/Program.cpp
-               ${CPP_DIR}/TextRenderer.cpp
-               ${CPP_DIR}/LaplaceSolver.cpp
-               ${CPP_DIR}/ResultApp.cpp
-               ${CPP_DIR}/ResultLayer.cpp
-               ${CPP_DIR}/Grid.cpp
-               ${CPP_DIR}/Node.cpp
-               ${CPP_DIR}/Geometry.cpp
-               ${CPP_DIR}/NodeVertex.cpp
+               ${CPP_DIR}/main.cpp
+
+               ${CPP_DIR}/Graphics/GeometryShape.cpp
+               ${CPP_DIR}/Graphics/GridShape.cpp
+               ${CPP_DIR}/Graphics/Legend.cpp
+               ${CPP_DIR}/Graphics/NodeVertex.cpp
+               ${CPP_DIR}/Graphics/ResultApp.cpp
+               ${CPP_DIR}/Graphics/ResultLayer.cpp
+               ${CPP_DIR}/Graphics/TextRenderer.cpp
+               ${CPP_DIR}/Graphics/ResultRenderer.cpp
+
+               ${CPP_DIR}/Solver/LaplaceSolver.cpp
+               ${CPP_DIR}/Solver/Grid.cpp
+               ${CPP_DIR}/Solver/Node.cpp
+               ${CPP_DIR}/Solver/Geometry.cpp
                )
 
 TARGET_LINK_DIRECTORIES(deltaz PRIVATE

@@ -1,15 +1,19 @@
-#ifndef GEOEMTRY_HPP
-#define GEOEMTRY_HPP
+#ifndef GEOMETRY_HPP
+#define GEOMETRY_HPP
+
+#include "dz/Solver/Node.hpp"
 
 #include <filesystem>
-#include "dz/Node.hpp"
 
 class Geometry
 {
 public:
    void loadFile(std::filesystem::path const& file);
 
+   explicit operator bool() const noexcept;
+
    float getPrecision() const noexcept;
+
    std::vector<Node>& getNodes() noexcept;
    std::vector<Node> const& getNodes() const noexcept;
 
@@ -22,5 +26,5 @@ private:
 
 #include "Geometry.inl"
 
-#endif // GEOEMTRY_HPP
+#endif // GEOMETRY_HPP
 

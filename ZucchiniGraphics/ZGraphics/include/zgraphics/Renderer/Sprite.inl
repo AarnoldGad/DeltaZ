@@ -29,10 +29,10 @@ inline size_t zg::Sprite::getElementCount() const noexcept
    return 6;
 }
 
-inline unsigned int* zg::Sprite::getElements() const noexcept
+inline unsigned int const* zg::Sprite::getElements() const noexcept
 {
    static unsigned int elements[] = { 0, 1, 2,
-      1, 2, 3 };
+                                      1, 2, 3 };
    return elements;
 }
 

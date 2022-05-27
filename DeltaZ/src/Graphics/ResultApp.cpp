@@ -1,22 +1,23 @@
-#include "dz/ResultApp.hpp"
+#include "dz/Graphics/ResultApp.hpp"
 
-#include "dz/TextRenderer.hpp"
-#include "dz/LaplaceSolver.hpp"
-#include "dz/Grid.hpp"
-#include "dz/Geometry.hpp"
-#include "dz/NodeVertex.hpp"
+#include "dz/Solver/LaplaceSolver.hpp"
+#include "dz/Solver/Grid.hpp"
+#include "dz/Solver/Geometry.hpp"
+#include "dz/Graphics/TextRenderer.hpp"
+#include "dz/Graphics/NodeVertex.hpp"
 
 #include <glad/glad.h>
 
-void ResultApp::show(Geometry const& geometry, Grid const& results)
+ze::EventBus* GetEventBus();
+
+void ResultApp::show(Results const& results)
 {
    init();
    configureContext(3, 3);
    openWindow();
-   m_window->setColor(zg::Colors::White);
 
    m_layer = std::make_unique<ResultLayer>(m_window.get());
-   m_layer->load(geometry, results);
+   m_layer->load(results.geometry, results.grid);
 
    mainLoop();
 
@@ -35,6 +36,9 @@ void ResultApp::mainLoop()
 
       m_window->draw();
       zg::Context::PollEvents();
+      ::GetEventBus()->dispatchEvents();
+
+      ze::Sleep(ze::Milliseconds(20));
    }
 }
 
@@ -64,15 +68,8 @@ void ResultApp::configureContext(int major, int minor)
 void ResultApp::openWindow()
 {
    m_window = zg::Window::Make("DeltaZ", { 800, 600 });
-   m_window->setColor(zg::Colors::Black);
-
-
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   m_window->setColor(zg::Colors::White);
 }
 
-ResultApp::~ResultApp()
-{
-
-}
+ResultApp::~ResultApp() {}
 

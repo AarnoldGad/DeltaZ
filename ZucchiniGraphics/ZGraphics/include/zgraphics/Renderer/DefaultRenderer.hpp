@@ -47,7 +47,7 @@ namespace zg
       void setLayout(VertexLayout const& layout);
       void setViewProjection(ViewProjection const* viewProjection) noexcept;
 
-      void submit(TexturedMesh const& object, glm::mat4 transform = {});
+      void submit(TexturedMesh const& object, glm::mat4 transform = glm::mat4(1.f));
       void render(Shader& shader) override;
 
       DefaultRenderer() = default;

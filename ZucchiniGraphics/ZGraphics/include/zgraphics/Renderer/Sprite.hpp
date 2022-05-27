@@ -52,7 +52,7 @@ namespace zg
       Vertex const* getVertex(size_t index) const noexcept override;
 
       size_t getElementCount() const noexcept override;
-      unsigned int* getElements() const noexcept override;
+      unsigned int const* getElements() const noexcept override;
 
       size_t getTextureCount() const noexcept override;
       void setTexture(Texture const* texture) noexcept;

@@ -11,5 +11,5 @@ uniform sampler2D atlas;
 void main()
 {
    vec4 texColor = texture(atlas, iTexCoord);
-   FragColor = vec4(iColor.rgb, texColor.r);
+   FragColor = vec4(0.0, 0.0, 0.0, texColor.r);
 }

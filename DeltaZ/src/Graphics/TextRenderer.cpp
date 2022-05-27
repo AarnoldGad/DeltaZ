@@ -1,4 +1,4 @@
-#include "dz/TextRenderer.hpp"
+#include "dz/Graphics/TextRenderer.hpp"
 
 void TextRenderer::setLayout(zg::VertexLayout const& layout)
 {
@@ -56,13 +56,13 @@ void TextRenderer::renderText(zg::Shader& shader, zg::Font const& font,
 
       float vertices[] = 
       {
-         charPos.x             , charPos.y - charSize.y, 1.f, 1.f, 1.f, 1.f, glyph.getRect().x                    , glyph.getRect().y,
-         charPos.x             , charPos.y             , 1.f, 1.f, 1.f, 1.f, glyph.getRect().x                    , glyph.getRect().y + glyph.getRect().w,
-         charPos.x + charSize.x, charPos.y             , 1.f, 1.f, 1.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y + glyph.getRect().w,
+         charPos.x             , charPos.y - charSize.y, 0.f, 0.f, 0.f, 1.f, glyph.getRect().x                    , glyph.getRect().y,
+         charPos.x             , charPos.y             , 0.f, 0.f, 0.f, 1.f, glyph.getRect().x                    , glyph.getRect().y + glyph.getRect().w,
+         charPos.x + charSize.x, charPos.y             , 0.f, 0.f, 0.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y + glyph.getRect().w,
 
-         charPos.x             , charPos.y - charSize.y, 1.f, 1.f, 1.f, 1.f, glyph.getRect().x                    , glyph.getRect().y,
-         charPos.x + charSize.x, charPos.y             , 1.f, 1.f, 1.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y + glyph.getRect().w,
-         charPos.x + charSize.x, charPos.y - charSize.y, 1.f, 1.f, 1.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y
+         charPos.x             , charPos.y - charSize.y, 0.f, 0.f, 0.f, 1.f, glyph.getRect().x                    , glyph.getRect().y,
+         charPos.x + charSize.x, charPos.y             , 0.f, 0.f, 0.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y + glyph.getRect().w,
+         charPos.x + charSize.x, charPos.y - charSize.y, 0.f, 0.f, 0.f, 1.f, glyph.getRect().x + glyph.getRect().z, glyph.getRect().y
       };
 
       glyph.getTexture()->bind();

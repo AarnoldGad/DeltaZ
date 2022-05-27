@@ -1,7 +1,10 @@
-#include "dz/NodeVertex.hpp"
+#include "dz/Graphics/NodeVertex.hpp"
 
 NodeVertex::NodeVertex(glm::vec2 pos, float value)
    : m_pos(pos), m_value(value) {}
+
+NodeVertex::NodeVertex(Node const& node)
+   : m_pos(node.getPosition()), m_value(node.getValue()) {}
 
 void NodeVertex::setPosition(glm::vec2 pos) noexcept
 {

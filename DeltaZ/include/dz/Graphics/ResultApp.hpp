@@ -1,8 +1,9 @@
 #ifndef RESULTAPP_HPP
 #define RESULTAPP_HPP
 
-#include "dz/TextRenderer.hpp"
-#include "dz/ResultLayer.hpp"
+#include "dz/Solver/LaplaceSolver.hpp"
+#include "dz/Graphics/TextRenderer.hpp"
+#include "dz/Graphics/ResultLayer.hpp"
 
 #include <zgraphics/zgraphics.hpp>
 
@@ -12,7 +13,7 @@ class Geometry;
 class ResultApp
 {
 public:
-   void show(Geometry const& geometry, Grid const& results);
+   void show(Results const& results);
 
    ~ResultApp();
 

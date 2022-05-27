@@ -5,7 +5,7 @@
 namespace zg
 {
    Transform::Transform()
-      : m_transform(1.f), m_dirty(true), m_pos(0.f), m_origin(0.f), m_scale(1.f), m_rotation() {}
+      : m_transform(1.f), m_dirty(true), m_pos(0.f), m_origin(0.f), m_scale(1.f), m_rotation(1.f, 0.f, 0.f, 0.f) {}
 
    glm::mat4 const& Transform::getTransformationMatrix() const
    {

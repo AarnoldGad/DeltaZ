@@ -33,6 +33,8 @@ namespace zg
    class ZG_API Transform
    {
    public:
+      static Transform Identity() noexcept;
+
       glm::mat4 const& getTransformationMatrix() const;
 
       void setPosition(glm::vec3 pos) noexcept;
@@ -64,5 +66,7 @@ namespace zg
       glm::quat m_rotation;
    };
 }
+
+#include "Transform.inl"
 
 #endif /* ZE_TRANSFORM_HPP */

@@ -1,4 +1,4 @@
-#include "dz/Geometry.hpp"
+#include "dz/Solver/Geometry.hpp"
 
 #include <zucchini/zucchini.hpp>
 #include <yaml-cpp/yaml.h>

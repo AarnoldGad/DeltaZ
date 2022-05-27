@@ -1,3 +1,8 @@
+inline Geometry::operator bool() const noexcept
+{
+   return m_nodes.size();
+}
+
 inline float Geometry::getPrecision() const noexcept
 {
    return m_precision;

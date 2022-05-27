@@ -1,6 +1,8 @@
 #ifndef NODEVERTEX_HPP
 #define NODEVERTEX_HPP
 
+#include "dz/Solver/Node.hpp"
+
 #include <zgraphics/zgraphics.hpp>
 #include <glad/glad.h>
 
@@ -16,6 +18,7 @@ public:
    void setValue(float value) noexcept;
 
    explicit NodeVertex(glm::vec2 pos = {}, float value = 0.0);
+   explicit NodeVertex(Node const& node);
 
 private:
    glm::vec2 m_pos;

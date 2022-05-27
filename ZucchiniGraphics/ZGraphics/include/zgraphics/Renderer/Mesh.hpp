@@ -39,7 +39,7 @@ namespace zg
       virtual Vertex const* getVertex(size_t index) const noexcept = 0;
 
       virtual size_t getElementCount() const noexcept = 0;
-      virtual unsigned int* getElements() const noexcept = 0;
+      virtual unsigned int const* getElements() const noexcept = 0;
    };
 }
 
