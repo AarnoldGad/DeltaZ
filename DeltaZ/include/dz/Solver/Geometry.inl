@@ -1,6 +1,6 @@
 inline Geometry::operator bool() const noexcept
 {
-   return m_nodes.size();
+   return m_armatures.size();
 }
 
 inline float Geometry::getPrecision() const noexcept
@@ -8,13 +8,13 @@ inline float Geometry::getPrecision() const noexcept
    return m_precision;
 }
 
-inline std::vector<Node>& Geometry::getNodes() noexcept
+inline std::vector<Geometry::Armature>& Geometry::getArmatures() noexcept
 {
-   return m_nodes;
+   return m_armatures;
 }
 
-inline std::vector<Node> const& Geometry::getNodes() const noexcept
+inline std::vector<Geometry::Armature> const& Geometry::getArmatures() const noexcept
 {
-   return m_nodes;
+   return m_armatures;
 }
 

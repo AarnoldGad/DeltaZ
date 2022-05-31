@@ -5,23 +5,32 @@
 
 #include <filesystem>
 
+enum class Mode : int
+{
+   Closed = 1, Expanded
+};
+
 class Geometry
 {
 public:
+   using Armature = std::vector<Node>;
+
    void loadFile(std::filesystem::path const& file);
 
    explicit operator bool() const noexcept;
 
    float getPrecision() const noexcept;
+   Mode getMode() const noexcept;
 
-   std::vector<Node>& getNodes() noexcept;
-   std::vector<Node> const& getNodes() const noexcept;
+   std::vector<Armature>& getArmatures() noexcept;
+   std::vector<Armature> const& getArmatures() const noexcept;
 
    Geometry();
 
 private:
    float m_precision;
-   std::vector<Node> m_nodes;
+   Mode m_mode;
+   std::vector<Armature> m_armatures;
 };
 
 #include "Geometry.inl"

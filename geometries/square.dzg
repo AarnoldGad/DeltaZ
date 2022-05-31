@@ -1,44 +1,47 @@
 ---
 precision: 0.02
-points:
-  1:
-    pos:
-      - 0.5
-      - 0.0
-    value: 1.0
-  2:
-    pos:
-      - 0.0
-      - 0.0
-    value: 1.0
-  3:
-    pos:
-      - 0.0
-      - 1.0
-    value: 1.0
-  4:
-    pos:
-      - 0.5
-      - 1.0
-    value: 1.0
-  5:
-    pos:
-      - 0.5
-      - 1.0
-    value: -1.0
-  6:
-    pos:
-      - 1.0
-      - 1.0
-    value: -1.0
-  7:
-    pos:
-      - 1.0
-      - 0.0
-    value: -1.0
-  8:
-    pos:
-      - 0.5
-      - 0.0
-    value: -1.0
+mode: 1
+armatures:
+  - nodes:
+      - vertex:
+          pos:
+            - 0.4
+            - 0.0
+          value: 1.0
+      - vertex:
+          pos:
+            - 0.0
+            - 0.0
+          value: 1.0
+      - vertex:
+          pos:
+            - 0.0
+            - 1.0
+          value: 1.0
+      - vertex:
+          pos:
+            - 0.4
+            - 1.0
+          value: 1.0
+  - nodes:
+      - vertex:
+          pos:
+            - 0.6
+            - 1.0
+          value: -0.1
+      - vertex:
+          pos:
+            - 1.0
+            - 1.0
+          value: -0.1
+      - vertex:
+          pos:
+            - 1.0
+            - 0.0
+          value: -0.1
+      - vertex:
+          pos:
+            - 0.6
+            - 0.0
+          value: -0.1
 ...

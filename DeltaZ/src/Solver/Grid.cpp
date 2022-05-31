@@ -11,34 +11,35 @@ void Grid::configureGridFrom(Geometry const& geometry)
 {
    m_precision = geometry.getPrecision();
    
-   std::vector<Node> shape;
-   for (auto const& node : geometry.getNodes())
-      shape.push_back(node);
-
-   // Put first node at end to close shape
-   shape.push_back(*geometry.getNodes().begin());
+   std::vector<std::tuple<Node, Node> > segments;
+   for (auto const& armature : geometry.getArmatures())
+   {
+      for (auto nodeIt = armature.begin(); nodeIt != armature.end() - 1; ++nodeIt)
+         segments.push_back(std::make_tuple(*nodeIt, *(nodeIt + 1)));
+   }
 
    setGridBounds(geometry);
-   generateGrid(shape);
+   generateGrid(segments);
    initNeighbours();
-   initBoundaries(shape);
+   initBoundaries(segments);
 }
 
 void Grid::setGridBounds(Geometry const& geometry)
 {
    glm::vec4 bounds = { 0.f, 0.f, 0.f, 0.f };
-   for (auto const& node : geometry.getNodes())
-   {
-      if (node.getPosition().x < bounds.x) bounds.x = node.getPosition().x;
-      if (node.getPosition().y < bounds.y) bounds.y = node.getPosition().y;
-      if (node.getPosition().x > bounds.z) bounds.z = node.getPosition().x;
-      if (node.getPosition().y > bounds.w) bounds.w = node.getPosition().y;
-   }
+   for (auto const& armature : geometry.getArmatures())
+      for (auto const& node : armature)
+      {
+         if (node.getPosition().x < bounds.x) bounds.x = node.getPosition().x;
+         if (node.getPosition().y < bounds.y) bounds.y = node.getPosition().y;
+         if (node.getPosition().x > bounds.z) bounds.z = node.getPosition().x;
+         if (node.getPosition().y > bounds.w) bounds.w = node.getPosition().y;
+      }
 
    m_bounds = bounds;
 }
 
-void Grid::generateGrid(std::vector<Node> const& closedShape)
+void Grid::generateGrid(std::vector<std::tuple<Node, Node> > const& segments)
 {
    int columnCount = (m_bounds.z - m_bounds.x) / m_precision + 1;
    int rowCount = (m_bounds.w - m_bounds.y) / m_precision + 1;
@@ -62,7 +63,7 @@ void Grid::initNeighbours()
       it->second.setNeighbours(findNeighbours(std::get<0>(it->first), std::get<1>(it->first)));
 }
 
-void Grid::initBoundaries(std::vector<Node> const& closedShape)
+void Grid::initBoundaries(std::vector<std::tuple<Node, Node> > const& segments)
 {
    for (auto& element : m_nodes)
    {

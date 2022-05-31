@@ -6,17 +6,17 @@
 
 namespace
 {
-   GLenum toGlPrimitive(Primitive primitive)
+   GLenum toGlPrimitive(Primitives primitive)
    {
       switch (primitive)
       {
-         case Primitive::Points: return GL_POINTS;
-         case Primitive::Lines: return GL_LINES;
-         case Primitive::LineStrip: return GL_LINE_STRIP;
-         case Primitive::Triangles: return GL_TRIANGLES;
-         case Primitive::TriangleStrip: return GL_TRIANGLE_STRIP;
-         case Primitive::TriangleFan: return GL_TRIANGLE_FAN;
-         default: return GL_TRIANGLES;
+         case Primitives::Points:        return GL_POINTS;
+         case Primitives::Lines:         return GL_LINES;
+         case Primitives::LineStrip:     return GL_LINE_STRIP;
+         case Primitives::Triangles:     return GL_TRIANGLES;
+         case Primitives::TriangleStrip: return GL_TRIANGLE_STRIP;
+         case Primitives::TriangleFan:   return GL_TRIANGLE_FAN;
+         default:                        return GL_TRIANGLES;
       }
    }
 }
@@ -37,7 +37,7 @@ void ResultRenderer::submit(zg::Mesh const* mesh, glm::mat4 transform)
    m_objects.emplace(mesh, transform);
 }
 
-void ResultRenderer::render(zg::Shader* shader, bool isBoundary, Primitive primitive)
+void ResultRenderer::render(zg::Shader* shader, RenderOptions options, Primitives primitive)
 {
    if (shader)
    {
@@ -45,7 +45,7 @@ void ResultRenderer::render(zg::Shader* shader, bool isBoundary, Primitive primi
       shader->setMatrix4("view", m_viewProjection->getViewMatrix());
       shader->setMatrix4("projection", m_viewProjection->getProjectionMatrix());
 
-      shader->setBoolean("isBoundary", isBoundary);
+      shader->setBoolean("renderBlack", options & RenderOptions::InBlack);
    }
 
    for (auto& object : m_objects)

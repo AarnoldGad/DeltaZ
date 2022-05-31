@@ -34,15 +34,15 @@ private:
 
    // Grid initialisation
    void setGridBounds(Geometry const& geometry);
-   void generateGrid(std::vector<Node> const& closedShape);
+   void generateGrid(std::vector<std::tuple<Node, Node> > const& segments);
    void initNeighbours();
-   void initBoundaries(std::vector<Node> const& closedShape);
+   void initBoundaries(std::vector<std::tuple<Node, Node> > const& segments);
 
    Node::Neighbours findNeighbours(int x, int y);
 
    // Math and geometry helpers
    float interpolate(Node const& point, Node const& segmentStart, Node const& segmentEnd) const;
-   bool isPointInShape(glm::vec2 point, std::vector<Node> const& closedShape) const;
+   bool isPointInShape(glm::vec2 point, std::vector<std::tuple<Node, Node> > const& segments) const;
    float distanceFromSegment(glm::vec2 point, glm::vec2 segmentStart, glm::vec2 segmentEnd) const;
    bool isOnSegment(glm::vec2 point, glm::vec2 segmentStart, glm::vec2 segmentEnd) const;
    Orientation findOrientation(glm::vec2 a, glm::vec2 b, glm::vec2 c) const;

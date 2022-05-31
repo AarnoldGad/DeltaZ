@@ -36,23 +36,23 @@ void ResultLayer::render()
    glViewport(fbSize.x / 2, fbSize.y / 2, fbSize.x / 2, fbSize.y / 2);
    m_renderer->setViewProjection(&m_ortho);
    m_renderer->submit(&m_gridShape);
-   m_renderer->render(m_shader, false, Primitive::Points);
+   m_renderer->render(m_shader, RenderOptions::InBlack, Primitives::Points);
    m_renderer->submit(&m_geometryShape);
-   m_renderer->render(m_shader, true, Primitive::Lines);
+   m_renderer->render(m_shader, RenderOptions::InColor, Primitives::Lines);
 
    // Render top left: level-rendering
    glViewport(0, fbSize.y / 2, fbSize.x / 2, fbSize.y / 2);
    m_renderer->submit(&m_gridShape);
-   m_renderer->render(m_shader, false, Primitive::Triangles);
+   m_renderer->render(m_shader, RenderOptions::InColor, Primitives::Triangles);
    m_renderer->submit(&m_geometryShape);
-   m_renderer->render(m_shader, true, Primitive::Lines);
+   m_renderer->render(m_shader, RenderOptions::InBlack, Primitives::Lines);
 
    // Render bottom right legend
    glViewport(fbSize.x / 2, 0, fbSize.x / 2, fbSize.y / 2);
    m_renderer->submit(&m_legend);
-   m_renderer->render(m_shader, false, Primitive::Triangles);
+   m_renderer->render(m_shader, RenderOptions::InColor, Primitives::Triangles);
    m_renderer->submit(&m_legend);
-   m_renderer->render(m_shader, true, Primitive::LineStrip);
+   m_renderer->render(m_shader, RenderOptions::InBlack, Primitives::LineStrip);
 
    m_textRenderer->renderText(*m_textShader, *m_font, std::to_string(m_geometryShape.getMaxValue()), { m_gridWidth * 0.1f, 0.f, 0.f }, 0.002f);
    m_textRenderer->renderText(*m_textShader, *m_font, std::to_string(m_geometryShape.getMinValue()), { m_gridWidth * 0.1f, m_gridWidth / 2.f, 0.f }, 0.002f);
@@ -62,10 +62,10 @@ void ResultLayer::render()
    glViewport(0, 0, fbSize.x / 2, fbSize.y / 2);
    m_renderer->setViewProjection(&m_camera);
    m_renderer->submit(&m_geometryShape, m_3Dtransform.getTransformationMatrix());
-   m_renderer->render(m_shader, true, Primitive::Lines);
+   m_renderer->render(m_shader, RenderOptions::InBlack, Primitives::Lines);
 
    m_renderer->submit(&m_gridShape, m_3Dtransform.getTransformationMatrix());
-   m_renderer->render(m_shader3D, false, Primitive::Triangles);
+   m_renderer->render(m_shader3D, RenderOptions::InColor, Primitives::Triangles);
 }
 
 void ResultLayer::handleEvent(ze::Event& event)

@@ -6,11 +6,11 @@ in float iValue;
 
 uniform float maxValue;
 uniform float minValue;
-uniform bool isBoundary;
+uniform bool renderBlack;
 
 void main()
 {
-   if (isBoundary)
+   if (renderBlack)
       FragColor = vec4(0.0, 0.0, 0.0, 1.0);
    else
    {

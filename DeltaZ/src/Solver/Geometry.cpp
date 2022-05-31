@@ -1,22 +1,26 @@
 #include "dz/Solver/Geometry.hpp"
 
 #include <zucchini/zucchini.hpp>
-#include <yaml-cpp/yaml.h>
+#include "dz/defines.hpp"
 
 Geometry::Geometry()
-   : m_precision{} {}
+   : m_precision{}, m_mode(Mode::Closed) {}
 
 void Geometry::loadFile(std::filesystem::path const& file)
 {
+   m_armatures.clear();
    YAML::Node geometry = YAML::LoadFile(file);
-   YAML::Node points = geometry["points"];
+   YAML::Node armatures = geometry["armatures"];
 
    m_precision = geometry["precision"].as<float>();
-   m_nodes.clear();
-   m_nodes.reserve(points.size());
+   m_mode = static_cast<Mode>(geometry["mode"].as<int>());
 
-   for (auto point : points)
-      m_nodes.push_back(Node({ point.second["pos"][0].as<float>(),
-                               point.second["pos"][1].as<float>() },
-                               point.second["value"].as<double>()));
+   int i = 0;
+   for (auto nodes : armatures)
+   {
+      for (auto vertex : nodes.second)
+         m_armatures[i].push_back(Node(vertex.second["pos"].as<glm::vec2>(),
+                                       vertex.second["value"].as<double>()));
+      ++i;
+   }
 }

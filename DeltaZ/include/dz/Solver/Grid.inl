@@ -28,7 +28,7 @@ inline std::map<std::tuple<int, int>, Node> const& Grid::getNodes() const noexce
    return m_nodes;
 }
 
-inline bool Grid::isPointInShape(glm::vec2 const point, std::vector<Node> const& closedShape) const
+inline bool Grid::isPointInShape(glm::vec2 const point, std::vector<std::tuple<Node, Node> > const& segments) const
 {
    // FIXME Point detected as in the shape because colinear
    // with one same end of multiple different segments

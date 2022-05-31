@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "dz/Program.hpp"
+#include "dz/defines.hpp"
 
 #include "dz/Graphics/ResultApp.hpp"
 #include "dz/Solver/LaplaceSolver.hpp"
@@ -14,10 +15,17 @@ ze::EventBus* GetEventBus()
 int main(int argc, char* argv[])
 {
    Program::Configure(argc, argv);
+   std::filesystem::path file = "geometries/";
+   if (Program::GetArguments()->size() > 1)
+      file /= Program::GetArguments()->getArgument(2)->value;
+   else // Load Geometry : File extension "dzg" for "DeltaZ Geometry"
+      file /= "square.dzg";
 
-   // Load Geometry : File extension "dzg" for "DeltaZ Geometry"
    LaplaceSolver solver;
-   solver.load(GeometryFile("geometries/square.dzg"));
+   solver.load(GeometryFile(file));
+
+   std::cout << file << std::endl;
+   return 0;
 
    // generate grid from geometry
    solver.generateGrid();
