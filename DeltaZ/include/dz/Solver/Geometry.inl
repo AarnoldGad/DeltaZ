@@ -13,6 +13,11 @@ inline Mode Geometry::getMode() const noexcept
    return m_mode;
 }
 
+inline int Geometry::getIterations() const noexcept
+{
+   return m_iterations;
+}
+
 inline std::vector<Geometry::Armature>& Geometry::getArmatures() noexcept
 {
    return m_armatures;

@@ -13,8 +13,7 @@ void LaplaceSolver::generateGrid()
 
 void LaplaceSolver::solve()
 {
-   int iterations = 1000;
-   for (int i = 0; i < iterations; ++i)
+   for (int i = 0; i < m_geometry.getIterations(); ++i)
       for (auto& element : m_grid.getNodes())
       {
          Node& node = element.second;

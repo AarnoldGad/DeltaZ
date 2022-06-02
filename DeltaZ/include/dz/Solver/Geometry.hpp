@@ -21,6 +21,7 @@ public:
 
    float getPrecision() const noexcept;
    Mode getMode() const noexcept;
+   int getIterations() const noexcept;
 
    std::vector<Armature>& getArmatures() noexcept;
    std::vector<Armature> const& getArmatures() const noexcept;
@@ -30,6 +31,7 @@ public:
 private:
    float m_precision;
    Mode m_mode;
+   int m_iterations;
    std::vector<Armature> m_armatures;
 };
 

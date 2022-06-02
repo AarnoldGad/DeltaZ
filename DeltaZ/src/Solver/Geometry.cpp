@@ -13,6 +13,7 @@ void Geometry::loadFile(std::filesystem::path const& file)
 
    m_precision = geometry["precision"].as<float>();
    m_mode = static_cast<Mode>(geometry["mode"].as<int>());
+   m_iterations = geometry["iterations"].as<int>();
 
    YAML::Node armatures = geometry["armatures"];
 
