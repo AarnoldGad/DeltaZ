@@ -10,7 +10,6 @@ namespace ze
    void Arguments::configure(int argc, char* argv[])
    {
       m_arguments.clear();
-      m_arguments.resize(argc);
 
       for (int i = 0; i < argc; ++i)
          m_arguments.push_back({ argv[i] });

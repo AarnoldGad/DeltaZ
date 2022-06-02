@@ -10,17 +10,21 @@ void Geometry::loadFile(std::filesystem::path const& file)
 {
    m_armatures.clear();
    YAML::Node geometry = YAML::LoadFile(file);
-   YAML::Node armatures = geometry["armatures"];
 
    m_precision = geometry["precision"].as<float>();
    m_mode = static_cast<Mode>(geometry["mode"].as<int>());
 
+   YAML::Node armatures = geometry["armatures"];
+
    int i = 0;
-   for (auto nodes : armatures)
+   m_armatures.resize(armatures.size());
+   for (auto armature : armatures)
    {
-      for (auto vertex : nodes.second)
-         m_armatures[i].push_back(Node(vertex.second["pos"].as<glm::vec2>(),
-                                       vertex.second["value"].as<double>()));
+      for (auto node : armature["nodes"])
+      {
+         m_armatures.at(i).push_back(Node(node["pos"].as<glm::vec2>(),
+                                          node["value"].as<double>()));
+      }
       ++i;
    }
 }

@@ -44,6 +44,7 @@ private:
    Legend m_legend;
 
    bool m_grabbed;
+   bool m_polygon;
    glm::ivec2 m_previousMousePos;
    glm::vec2 m_gridCenter;
    float m_gridWidth;

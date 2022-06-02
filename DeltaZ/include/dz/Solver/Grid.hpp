@@ -34,14 +34,14 @@ private:
 
    // Grid initialisation
    void setGridBounds(Geometry const& geometry);
-   void generateGrid(std::vector<std::tuple<Node, Node> > const& segments);
+   void generateGrid(std::vector<std::tuple<Node, Node> > const& segments, Mode mode);
    void initNeighbours();
    void initBoundaries(std::vector<std::tuple<Node, Node> > const& segments);
 
    Node::Neighbours findNeighbours(int x, int y);
 
    // Math and geometry helpers
-   float interpolate(Node const& point, Node const& segmentStart, Node const& segmentEnd) const;
+   float interpolate(Node const& point, std::tuple<Node, Node> const& segment) const;
    bool isPointInShape(glm::vec2 point, std::vector<std::tuple<Node, Node> > const& segments) const;
    float distanceFromSegment(glm::vec2 point, glm::vec2 segmentStart, glm::vec2 segmentEnd) const;
    bool isOnSegment(glm::vec2 point, glm::vec2 segmentStart, glm::vec2 segmentEnd) const;

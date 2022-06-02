@@ -19,27 +19,35 @@ void Grid::configureGridFrom(Geometry const& geometry)
    }
 
    setGridBounds(geometry);
-   generateGrid(segments);
+   generateGrid(segments, geometry.getMode());
    initNeighbours();
    initBoundaries(segments);
 }
 
 void Grid::setGridBounds(Geometry const& geometry)
 {
-   glm::vec4 bounds = { 0.f, 0.f, 0.f, 0.f };
+   m_bounds = { 0.f, 0.f, 0.f, 0.f };
    for (auto const& armature : geometry.getArmatures())
       for (auto const& node : armature)
       {
-         if (node.getPosition().x < bounds.x) bounds.x = node.getPosition().x;
-         if (node.getPosition().y < bounds.y) bounds.y = node.getPosition().y;
-         if (node.getPosition().x > bounds.z) bounds.z = node.getPosition().x;
-         if (node.getPosition().y > bounds.w) bounds.w = node.getPosition().y;
+         if (node.getPosition().x < m_bounds.x) m_bounds.x = node.getPosition().x;
+         if (node.getPosition().y < m_bounds.y) m_bounds.y = node.getPosition().y;
+         if (node.getPosition().x > m_bounds.z) m_bounds.z = node.getPosition().x;
+         if (node.getPosition().y > m_bounds.w) m_bounds.w = node.getPosition().y;
       }
 
-   m_bounds = bounds;
+   if (geometry.getMode() == Mode::Expanded)
+   {
+      float widthSupp = (m_bounds.x - m_bounds.z) * 0.1;
+      float heightSupp = (m_bounds.y - m_bounds.w) * 0.1;
+      m_bounds.x += widthSupp;
+      m_bounds.y += heightSupp;
+      m_bounds.z -= widthSupp;
+      m_bounds.w -= heightSupp;
+   }
 }
 
-void Grid::generateGrid(std::vector<std::tuple<Node, Node> > const& segments)
+void Grid::generateGrid(std::vector<std::tuple<Node, Node> > const& segments, Mode mode)
 {
    int columnCount = (m_bounds.z - m_bounds.x) / m_precision + 1;
    int rowCount = (m_bounds.w - m_bounds.y) / m_precision + 1;
@@ -50,9 +58,17 @@ void Grid::generateGrid(std::vector<std::tuple<Node, Node> > const& segments)
       for (int column = 0; column < columnCount; ++column)
       {
          glm::vec2 point = { m_bounds.x + column * m_precision, m_bounds.y + row * m_precision };
-         if (isPointInShape(point, closedShape))
+         if (mode == Mode::Closed)
+         {
+            if (isPointInShape(point, segments))
+               m_nodes.emplace(std::make_tuple(row, column), Node({ m_bounds.x + column * m_precision,
+                                                                    m_bounds.y + row * m_precision }));
+         }
+         else if (mode == Mode::Expanded)
+         {
             m_nodes.emplace(std::make_tuple(row, column), Node({ m_bounds.x + column * m_precision,
                                                                  m_bounds.y + row * m_precision }));
+         }
       }
    }
 }
@@ -68,33 +84,34 @@ void Grid::initBoundaries(std::vector<std::tuple<Node, Node> > const& segments)
    for (auto& element : m_nodes)
    {
       Node& node = element.second;
-      std::array<Node, 2> segment{ *(closedShape.begin()), *(closedShape.begin() + 1) };
+      std::tuple<Node, Node> closestSegment{ *(segments.begin()) };
       float smallerDistance = distanceFromSegment(node.getPosition(),
-                                                  segment[0].getPosition(),
-                                                  segment[1].getPosition());
+                                                  std::get<0>(closestSegment).getPosition(),
+                                                  std::get<1>(closestSegment).getPosition());
 
-      for (auto it = closedShape.begin(); it != closedShape.end() - 1; ++it)
+      for (auto const& segment : segments)
       {
-         float distance = distanceFromSegment(node.getPosition(),
-                                              it->getPosition(), (it + 1)->getPosition());
+         float distance = distanceFromSegment(node.getPosition(), std::get<0>(segment).getPosition(),
+                                                                  std::get<1>(segment).getPosition());
          if (distance < smallerDistance)
          {
             smallerDistance = distance;
-            segment[0] = *it;
-            segment[1] = *(it + 1);
+            closestSegment= segment;
          }
       }
 
       if (smallerDistance < (m_precision - 0.00001f))
       {
          node.setBoundary();
-         node.setValue(interpolate(node, segment[0], segment[1]));
+         node.setValue(interpolate(node, closestSegment));
       }
    }
 }
 
-float Grid::interpolate(Node const& point, Node const& segmentStart, Node const& segmentEnd) const
+float Grid::interpolate(Node const& point, std::tuple<Node, Node> const& segment) const
 {
+   Node const& segmentStart = std::get<0>(segment);
+   Node const& segmentEnd = std::get<1>(segment);
    float totalLength = glm::distance(point.getPosition(), segmentStart.getPosition())
                      + glm::distance(point.getPosition(), segmentEnd.getPosition());
    float ratio = glm::distance(point.getPosition(), segmentStart.getPosition()) / totalLength;

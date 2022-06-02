@@ -8,6 +8,11 @@ inline float Geometry::getPrecision() const noexcept
    return m_precision;
 }
 
+inline Mode Geometry::getMode() const noexcept
+{
+   return m_mode;
+}
+
 inline std::vector<Geometry::Armature>& Geometry::getArmatures() noexcept
 {
    return m_armatures;

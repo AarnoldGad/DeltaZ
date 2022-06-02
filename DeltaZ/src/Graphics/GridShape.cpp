@@ -61,6 +61,7 @@ void GridShape::setGrid(Grid const& grid)
          m_elements.push_back(nodeIndex.at(right));
       }
 
+#if 0
       // Special cases
       if (!neighbours.up && !neighbours.right && neighbours.rightUp)
       {
@@ -106,5 +107,6 @@ void GridShape::setGrid(Grid const& grid)
             m_elements.push_back(nodeIndex.at(up));
          }
       }
+#endif
    }
 }

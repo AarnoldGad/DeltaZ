@@ -35,11 +35,11 @@ inline bool Grid::isPointInShape(glm::vec2 const point, std::vector<std::tuple<N
    glm::vec2 direction = point + glm::vec2(100.f, 0.f);
    int totalIntersections = 0;
 
-   for (auto node = closedShape.begin(); node != closedShape.end() - 1; ++node)
+   for (auto const& segment : segments)
    {
-      if (doesSegmentsIntersect(point, direction, node->getPosition(), (node + 1)->getPosition()))
+      if (doesSegmentsIntersect(point, direction, std::get<0>(segment).getPosition(), std::get<1>(segment).getPosition()))
          totalIntersections++;
-      if (isOnSegment(point, node->getPosition(), (node + 1)->getPosition()))
+      if (isOnSegment(point, std::get<0>(segment).getPosition(), std::get<1>(segment).getPosition()))
          return true;
    }
 
@@ -48,7 +48,7 @@ inline bool Grid::isPointInShape(glm::vec2 const point, std::vector<std::tuple<N
 }
 
 inline float Grid::distanceFromSegment(glm::vec2 const point, glm::vec2 const segmentStart,
-                                                       glm::vec2 const segmentEnd) const
+                                                              glm::vec2 const segmentEnd) const
 {
    float segmentLength = glm::distance(segmentStart, segmentEnd);
    float pointDotEnd = glm::dot(point - segmentStart, segmentEnd - segmentStart);
@@ -60,7 +60,7 @@ inline float Grid::distanceFromSegment(glm::vec2 const point, glm::vec2 const se
 }
 
 inline bool Grid::isOnSegment(glm::vec2 const point, glm::vec2 const segmentStart,
-                                              glm::vec2 const segmentEnd) const
+                                                     glm::vec2 const segmentEnd) const
 {
    // TODO Improve epsilon comparison
    return distanceFromSegment(point, segmentStart, segmentEnd) < (m_precision / 2.f + 0.00001f);

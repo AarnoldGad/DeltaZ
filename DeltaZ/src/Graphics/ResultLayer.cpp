@@ -6,7 +6,7 @@ ze::EventBus* GetEventBus();
 
 ResultLayer::ResultLayer(zg::Window* window)
    : m_window(window), m_shader(nullptr), m_textShader(nullptr), m_font(nullptr),
-     m_grabbed(false), m_camera(ze::degrees(70.f)), m_ortho({ 1.f, 1.f }) {}
+     m_grabbed(false), m_polygon(false), m_camera(ze::degrees(70.f)), m_ortho({ 1.f, 1.f }) {}
 
 void ResultLayer::load(Geometry const& geometry, Grid const& grid)
 {
@@ -58,6 +58,8 @@ void ResultLayer::render()
    m_textRenderer->renderText(*m_textShader, *m_font, std::to_string(m_geometryShape.getMinValue()), { m_gridWidth * 0.1f, m_gridWidth / 2.f, 0.f }, 0.002f);
 
    glEnable(GL_DEPTH_TEST);
+   if (m_polygon)
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
    // Render bottom left: 3D perspective
    glViewport(0, 0, fbSize.x / 2, fbSize.y / 2);
    m_renderer->setViewProjection(&m_camera);
@@ -66,6 +68,7 @@ void ResultLayer::render()
 
    m_renderer->submit(&m_gridShape, m_3Dtransform.getTransformationMatrix());
    m_renderer->render(m_shader3D, RenderOptions::InColor, Primitives::Triangles);
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 void ResultLayer::handleEvent(ze::Event& event)
@@ -133,6 +136,12 @@ void ResultLayer::handleEvent(ze::Event& event)
 
             m_3Dtransform.setScale({ 1.f / m_gridWidth, -1.f / m_gridWidth, 1.f / m_gridWidth });
             m_camera.setAspectRatio(aspectRatio);
+         });
+
+   dispatcher.dispatch<zg::KeyPressedEvent>([&] (zg::KeyPressedEvent& event)
+         {
+            if (event.getKey() == zg::Keyboard::Key::P)
+               m_polygon = !m_polygon;
          });
 }
 
