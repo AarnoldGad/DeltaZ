@@ -4,7 +4,7 @@ mode: 1
 armatures:
   - nodes:
       - pos:
-          - 1.0
+          - 0.4
           - 0.0
         value: 1.0
       - pos:
@@ -16,32 +16,24 @@ armatures:
           - 1.0
         value: 1.0
       - pos:
+          - 0.4
           - 1.0
-          - 1.0
-        value: 1.0
-      - pos:
-          - 1.0
-          - 0.0
         value: 1.0
   - nodes:
       - pos:
-          - 0.45
-          - 0.45
-        value: 0.0
+          - 0.6
+          - 0.0
+        value: -1.0
       - pos:
-          - 0.55
-          - 0.45
-        value: 0.0
+          - 1.0
+          - 0.0
+        value: -1.0
       - pos:
-          - 0.55
-          - 0.55
-        value: 0.0
+          - 1.0
+          - 1.0
+        value: -1.0
       - pos:
-          - 0.45
-          - 0.55
-        value: 0.0
-      - pos:
-          - 0.45
-          - 0.45
-        value: 0.0
+          - 0.6
+          - 1.0
+        value: -1.0
 ...

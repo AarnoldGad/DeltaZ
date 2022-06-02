@@ -38,8 +38,9 @@ void Grid::setGridBounds(Geometry const& geometry)
 
    if (geometry.getMode() == Mode::Expanded)
    {
-      float widthSupp = (m_bounds.x - m_bounds.z) * 0.1;
-      float heightSupp = (m_bounds.y - m_bounds.w) * 0.1;
+      float expansionFactor = 0.3;
+      float widthSupp = (m_bounds.x - m_bounds.z) * expansionFactor;
+      float heightSupp = (m_bounds.y - m_bounds.w) * expansionFactor;
       m_bounds.x += widthSupp;
       m_bounds.y += heightSupp;
       m_bounds.z -= widthSupp;
