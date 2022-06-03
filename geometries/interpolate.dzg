@@ -1,0 +1,27 @@
+---
+precision: 0.02
+mode: 1
+iterations: 1000
+armatures:
+  - nodes:
+      - pos:
+          - 0.0
+          - 0.0
+        value: 1.0
+      - pos:
+          - 1.0
+          - 0.0
+        value: 0.0
+      - pos:
+          - 1.0
+          - 1.0
+        value: 0.0
+      - pos:
+          - 0.0
+          - 1.0
+        value: 1.0
+      - pos:
+          - 0.0
+          - 0.0
+        value: 1.0
+...
